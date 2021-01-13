@@ -1,0 +1,52 @@
+// JavaScript Document
+
+			function getStockQuote(){
+				xmlHttp=GetXmlHttpObject();
+				
+				if (xmlHttp==null){
+			  		alert ("Your browser does not support AJAX!");
+			  		return;
+			  	}
+			  	
+			  	xmlHttp.onreadystatechange=stateChangeQuote;
+				xmlHttp.open("GET", "/entdom/entapps/servlet?CONTROLLER=com.yrcw.ent.stock.http.controller.StockQuoteAPIController", true);
+				xmlHttp.send(null);
+				
+			}
+			
+			function stateChangeQuote(){ 
+				if (xmlHttp.readyState==4){
+					var xmlDoc=xmlHttp.responseXML.documentElement	
+					
+					//document.getElementById("symbol").innerHTML = xmlDoc.getElementsByTagName("symbol")[0].childNodes[0].nodeValue;
+					document.getElementById("price").innerHTML = xmlDoc.getElementsByTagName("price")[0].childNodes[0].nodeValue + " ";
+					var changeDat = xmlDoc.getElementsByTagName("change")[0].childNodes[0].nodeValue;
+					var changeStr =" (+" 
+					if (changeDat < 0 ) {
+						changeStr = " ("
+			
+					} 
+					changeStr +=changeDat;
+					changeStr +=") ";
+					
+					document.getElementById("change").innerHTML = changeStr;
+					document.getElementById("date").innerHTML = xmlDoc.getElementsByTagName("date")[0].childNodes[0].nodeValue; 
+					setTimeout("getStockQuote()",60000);
+				}
+			}
+			
+			function GetXmlHttpObject(){
+				var xmlHttp=null;
+				try{
+			  		// Firefox, Opera 8.0+, Safari
+			  		xmlHttp=new XMLHttpRequest();
+			  	}catch (e) {
+			  		// Internet Explorer
+			  		try{
+			    		xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+			    	} catch (e) {
+			    		xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+			    	}
+			  	}
+				return xmlHttp;
+			}		
